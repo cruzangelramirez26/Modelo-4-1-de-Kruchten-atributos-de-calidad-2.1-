@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sesión 8 — Modelo 4+1 y Atributos de Calidad · EGEL Plus</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0c10;--card:#12151e;--card2:#181c28;--border:#1e2436;--text:#c8cdd8;--text2:#7c8494;--white:#e8ecf4;--green:#22c55e;--green2:#15803d;--greenBg:rgba(34,197,94,.08);--red:#ef4444;--red2:#b91c1c;--redBg:rgba(239,68,68,.08);--blue:#3b82f6;--amber:#f59e0b;--amberBg:rgba(245,158,11,.08);--purple:#a78bfa;--cyan:#06b6d4;--orange:#f97316}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.7;min-height:100vh}
+::selection{background:var(--purple);color:#fff}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#2a3040;border-radius:3px}
+.shell{max-width:860px;margin:0 auto;padding:16px 14px 60px}
+.hdr{background:linear-gradient(135deg,#111422,#1a162e 50%,#16122a);border:1px solid var(--border);border-radius:16px;padding:28px 24px;margin-bottom:20px;position:relative;overflow:hidden}
+.hdr::after{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:radial-gradient(circle,rgba(167,139,250,.07),transparent 70%);pointer-events:none}
+.hdr .tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--text2);margin-bottom:6px;text-transform:uppercase}
+.hdr h1{font-size:21px;font-weight:700;color:var(--white);margin-bottom:4px}
+.hdr p{font-size:13px;color:var(--text2)}
+.tabs{display:flex;gap:5px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:9px 18px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.tab.active{background:var(--purple);color:#fff;border-color:var(--purple);font-weight:600}
+.tab:hover:not(.active){border-color:#3b4a6a;color:var(--white)}
+.section{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:12px;animation:fadeUp .3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.section h2{font-size:17px;font-weight:700;color:var(--white);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section h3{font-size:14px;font-weight:600;color:var(--purple);margin:14px 0 6px}
+.section p,.section li{font-size:13.5px;line-height:1.75;color:var(--text)}
+.section ul{padding-left:18px;margin:6px 0}.section li{margin-bottom:4px}
+.section strong{color:var(--white);font-weight:600}
+.ref{font-family:'DM Mono',monospace;font-size:10.5px;color:var(--text2);margin-top:10px;font-style:italic}
+.tip{background:var(--amberBg);border:1px solid rgba(245,158,11,.12);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:12.5px}
+.tip strong{color:var(--amber)}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.vs>div{background:var(--card2);border-radius:8px;padding:10px 12px;font-size:12.5px;border:1px solid var(--border)}
+.vs h4{font-size:12px;font-weight:600;margin-bottom:4px}
+@media(max-width:600px){.vs{grid-template-columns:1fr}}
+.tbl{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px}
+.tbl th,.tbl td{padding:8px 10px;border:1px solid var(--border);text-align:left}
+.tbl th{background:var(--card2);color:var(--white);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.tbl td{color:var(--text)}
+.pbar{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+.pbar .track{flex:1;height:6px;background:#1a1f2e;border-radius:3px;overflow:hidden}
+.pbar .fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:3px;transition:width .4s ease}
+.pbar .label{font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);white-space:nowrap}
+.qcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:14px;animation:fadeUp .35s ease both}
+.qnum{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;color:var(--purple);margin-bottom:8px}
+.qtxt{font-size:15px;color:var(--white);font-weight:500;line-height:1.7;margin-bottom:6px;white-space:pre-line}
+.opts{display:grid;gap:8px}
+.opt{background:var(--card2);border:1.5px solid var(--border);border-radius:10px;padding:13px 16px;font-size:14px;color:var(--text);cursor:pointer;transition:all .2s;text-align:left;font-family:'DM Sans',sans-serif;line-height:1.6;display:flex;align-items:flex-start;gap:10px}
+.opt:hover:not(.locked){border-color:#3b4a6a;background:#1a1f30}
+.opt .letter{font-family:'DM Mono',monospace;font-weight:600;font-size:13px;color:var(--text2);min-width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(255,255,255,.04);flex-shrink:0;margin-top:1px}
+.opt.correct{border-color:var(--green2);background:var(--greenBg)}.opt.correct .letter{background:var(--green);color:#fff}
+.opt.wrong{border-color:var(--red2);background:var(--redBg)}.opt.wrong .letter{background:var(--red);color:#fff}
+.opt.locked{cursor:default;opacity:.7}.opt.correct.locked{opacity:1}.opt.dimmed{opacity:.45}
+.fb{margin-top:14px;padding:16px;border-radius:10px;animation:fadeUp .3s ease both;font-size:13.5px;line-height:1.75}
+.fb.ok{background:var(--greenBg);border:1px solid rgba(34,197,94,.15)}.fb.ok .fb-tag{color:var(--green)}
+.fb.no{background:var(--redBg);border:1px solid rgba(239,68,68,.15)}.fb.no .fb-tag{color:var(--red)}
+.fb-tag{font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-family:'DM Mono',monospace}
+.fb-text{color:var(--text)}.fb-ref{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);margin-top:8px}
+.fb-trap{margin-top:10px;padding:10px 12px;background:var(--amberBg);border:1px solid rgba(245,158,11,.12);border-radius:8px}
+.fb-trap .trap-tag{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--amber);font-weight:600;margin-bottom:4px}
+.fb-trap p{font-size:12.5px;color:var(--text);line-height:1.6}
+.nav{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn{padding:10px 20px;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--purple);color:#fff}.btn-primary:hover{background:#7c3aed}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:#3b4a6a;color:var(--white)}
+.results{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;animation:fadeUp .4s ease both}
+.results h2{font-size:20px;color:var(--white);margin-bottom:16px}
+.score-big{font-family:'DM Mono',monospace;font-size:48px;font-weight:700;margin-bottom:4px}
+.score-ok{color:var(--green)}.score-mid{color:var(--amber)}.score-bad{color:var(--red)}
+.modes{display:grid;gap:10px;margin-top:16px}
+.mode-btn{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:18px 20px;cursor:pointer;transition:all .2s;text-align:left;font-family:'DM Sans',sans-serif}
+.mode-btn:hover{border-color:var(--purple);background:#131828}
+.mode-btn h3{font-size:15px;color:var(--white);margin-bottom:3px}.mode-btn p{font-size:12px;color:var(--text2)}
+.review-item{padding:12px 16px;background:var(--card2);border-radius:8px;margin-bottom:8px;font-size:13px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="shell" id="app"></div>
+<script>
+const theory=[
+{id:"41intro",title:"Modelo 4+1 de Kruchten",icon:"🏛️",html:`
+<p><strong>Philippe Kruchten (1995)</strong> propuso que la arquitectura de software no se puede describir con un solo diagrama. Necesitas <strong>múltiples vistas</strong> porque cada stakeholder necesita ver algo diferente.</p>
+<p>El modelo tiene <strong>4 vistas + 1 central</strong> que las conecta:</p>
+<table class="tbl">
+<tr><th>Vista</th><th>Perspectiva</th><th>Stakeholder</th><th>Diagrama UML típico</th></tr>
+<tr><td><strong>Lógica</strong></td><td>Funcionalidad del sistema</td><td>Usuarios finales, analistas</td><td>Clases, paquetes, secuencia</td></tr>
+<tr><td><strong>Desarrollo</strong></td><td>Organización del código</td><td>Programadores, gestores</td><td>Componentes, paquetes</td></tr>
+<tr><td><strong>Proceso</strong></td><td>Concurrencia y comunicación</td><td>Integradores, rendimiento</td><td>Actividad, secuencia</td></tr>
+<tr><td><strong>Física</strong></td><td>Despliegue en hardware</td><td>Ing. de sistemas, operaciones</td><td>Despliegue</td></tr>
+<tr><td><strong>+1 Escenarios</strong></td><td>Casos de uso que conectan las 4</td><td>Todos</td><td>Casos de uso</td></tr>
+</table>
+<div class="tip"><strong>⚡ EGEL:</strong> Los escenarios (+1) no son una vista más — son el PEGAMENTO que valida y conecta las otras 4. Son casos de uso clave que se rastrean a través de cada vista.</div>
+`,ref:"Kruchten (1995) · Bass et al. (2013) Cap. 18 · Cervantes et al. (2016) Cap. 5"},
+
+{id:"logica",title:"Vista Lógica",icon:"🧠",html:`
+<p>Muestra la <strong>funcionalidad</strong> que el sistema ofrece al usuario. Se enfoca en QUÉ hace el sistema, no cómo se implementa.</p>
+<h3>¿Qué modela?</h3>
+<ul>
+<li>Las clases/objetos principales del dominio y sus relaciones</li>
+<li>Los paquetes que agrupan funcionalidad</li>
+<li>La descomposición funcional del sistema</li>
+</ul>
+<h3>Diagramas UML</h3>
+<ul>
+<li><strong>Diagrama de clases</strong> — entidades, atributos, relaciones</li>
+<li><strong>Diagrama de paquetes</strong> — agrupación de clases por módulo</li>
+<li><strong>Diagrama de secuencia</strong> — interacción entre objetos para un caso de uso</li>
+<li><strong>Diagrama de estados</strong> — ciclo de vida de una entidad</li>
+</ul>
+<h3>¿Quién la usa?</h3>
+<p>Usuarios finales y analistas — para verificar que el sistema hace lo que necesitan.</p>
+<div class="tip"><strong>⚡ EGEL:</strong> Si te preguntan "¿qué vista muestra las clases del dominio y la funcionalidad?" → Vista Lógica. Es la vista orientada al USUARIO FINAL.</div>
+`,ref:"Kruchten (1995) · Cervantes et al. (2016) Cap. 5"},
+
+{id:"desarrollo",title:"Vista de Desarrollo (Implementación)",icon:"💻",html:`
+<p>Muestra cómo se organiza el <strong>código fuente</strong>: módulos, componentes, librerías, dependencias entre paquetes.</p>
+<h3>¿Qué modela?</h3>
+<ul>
+<li>La estructura de módulos y subsistemas del código</li>
+<li>Dependencias entre componentes (quién importa qué)</li>
+<li>Cómo se divide el trabajo entre equipos de desarrollo</li>
+</ul>
+<h3>Diagramas UML</h3>
+<ul>
+<li><strong>Diagrama de componentes</strong> — módulos y sus interfaces/dependencias</li>
+<li><strong>Diagrama de paquetes</strong> — organización del código en carpetas/namespaces</li>
+</ul>
+<h3>¿Quién la usa?</h3>
+<p>Programadores y gestores de proyecto — para organizar el desarrollo y asignar trabajo.</p>
+<div class="tip"><strong>⚡ EGEL:</strong> Si te preguntan "¿qué vista interesa a los PROGRAMADORES?" → Vista de Desarrollo. Es la vista del CÓDIGO.</div>
+`,ref:"Kruchten (1995) · Bass et al. (2013) Cap. 18"},
+
+{id:"proceso",title:"Vista de Proceso",icon:"⚡",html:`
+<p>Muestra los aspectos de <strong>concurrencia, hilos, procesos y comunicación</strong> en tiempo de ejecución.</p>
+<h3>¿Qué modela?</h3>
+<ul>
+<li>Procesos e hilos que se ejecutan en paralelo</li>
+<li>Comunicación entre procesos (síncrona, asíncrona)</li>
+<li>Rendimiento, escalabilidad y disponibilidad</li>
+<li>Cómo se distribuye la carga</li>
+</ul>
+<h3>Diagramas UML</h3>
+<ul>
+<li><strong>Diagrama de actividad</strong> — flujos concurrentes con fork/join</li>
+<li><strong>Diagrama de secuencia</strong> — mensajes entre procesos con tiempos</li>
+</ul>
+<h3>¿Quién la usa?</h3>
+<p>Integradores de sistemas y los responsables de rendimiento/disponibilidad.</p>
+<div class="tip"><strong>⚡ EGEL:</strong> Si el escenario habla de "hilos", "procesos paralelos", "rendimiento" o "cómo se comunican los componentes en ejecución" → Vista de Proceso.</div>
+`,ref:"Kruchten (1995) · Bass et al. (2013) Cap. 18"},
+
+{id:"fisica",title:"Vista Física (Despliegue)",icon:"🖥️",html:`
+<p>Muestra cómo el software se <strong>mapea al hardware</strong>: servidores, redes, nodos, infraestructura.</p>
+<h3>¿Qué modela?</h3>
+<ul>
+<li>Nodos físicos (servidores, máquinas virtuales, contenedores)</li>
+<li>Qué componentes de software corren en qué nodo</li>
+<li>Topología de red y comunicación entre nodos</li>
+<li>Requisitos de hardware (RAM, CPU, almacenamiento)</li>
+</ul>
+<h3>Diagramas UML</h3>
+<ul>
+<li><strong>Diagrama de despliegue</strong> — nodos (cajas 3D) con artefactos adentro</li>
+</ul>
+<h3>¿Quién la usa?</h3>
+<p>Ingenieros de sistemas, equipo de operaciones/DevOps, equipo de infraestructura.</p>
+<div class="tip"><strong>⚡ EGEL:</strong> Si preguntan "¿en qué servidor corre cada componente?" o "¿qué diagrama muestra la infraestructura?" → Vista Física = diagrama de despliegue.</div>
+`,ref:"Kruchten (1995) · Cervantes et al. (2016) Cap. 5"},
+
+{id:"escenarios",title:"Vista +1: Escenarios",icon:"🎯",html:`
+<p>Los escenarios son <strong>casos de uso clave</strong> que sirven como pegamento entre las 4 vistas. No son una quinta vista independiente — son el mecanismo de VALIDACIÓN.</p>
+<h3>¿Para qué sirven?</h3>
+<ul>
+<li>Verificar que las 4 vistas son <strong>consistentes</strong> entre sí</li>
+<li>Guiar el descubrimiento de elementos arquitectónicos</li>
+<li>Servir como punto de partida del diseño</li>
+<li>Validar la arquitectura con los stakeholders</li>
+</ul>
+<h3>¿Cómo funcionan?</h3>
+<p>Se toma un caso de uso importante y se rastrea a través de cada vista:</p>
+<ul>
+<li><strong>Lógica:</strong> ¿qué clases participan?</li>
+<li><strong>Desarrollo:</strong> ¿en qué módulos está el código?</li>
+<li><strong>Proceso:</strong> ¿qué hilos/procesos se activan?</li>
+<li><strong>Física:</strong> ¿en qué servidores se ejecuta?</li>
+</ul>
+<div class="tip"><strong>⚡ EGEL:</strong> Si te preguntan "¿qué rol tienen los escenarios en el 4+1?" → NO son una vista más. Son casos de uso que CONECTAN y VALIDAN las 4 vistas.</div>
+`,ref:"Kruchten (1995) · Bass et al. (2013) Cap. 18"},
+
+{id:"atributos",title:"Atributos de calidad",icon:"⚖️",html:`
+<p>Los <strong>atributos de calidad</strong> (quality attributes) son los RNF que determinan la arquitectura. Bass et al. (2013) los organiza con escenarios medibles.</p>
+<h3>Los principales (para el EGEL)</h3>
+<table class="tbl">
+<tr><th>Atributo</th><th>Pregunta que responde</th><th>Ejemplo medible</th></tr>
+<tr><td><strong>Rendimiento</strong></td><td>¿Qué tan rápido responde?</td><td>Respuesta <2s con 1000 usuarios</td></tr>
+<tr><td><strong>Disponibilidad</strong></td><td>¿Cuánto tiempo está operativo?</td><td>99.99% uptime (52 min caída/año)</td></tr>
+<tr><td><strong>Seguridad</strong></td><td>¿Resiste ataques?</td><td>Datos encriptados AES-256 en reposo</td></tr>
+<tr><td><strong>Modificabilidad</strong></td><td>¿Qué tan fácil es cambiar?</td><td>Cambio de UI en <4 horas-persona</td></tr>
+<tr><td><strong>Testeabilidad</strong></td><td>¿Qué tan fácil es probar?</td><td>Cobertura de pruebas >80%</td></tr>
+<tr><td><strong>Usabilidad</strong></td><td>¿Qué tan fácil es de usar?</td><td>Completar tarea en <3 clics</td></tr>
+<tr><td><strong>Escalabilidad</strong></td><td>¿Soporta crecimiento?</td><td>De 1K a 100K usuarios sin rediseño</td></tr>
+<tr><td><strong>Portabilidad</strong></td><td>¿Funciona en otros entornos?</td><td>Correr en Linux y Windows sin cambios</td></tr>
+</table>
+<h3>Escenario de atributo de calidad (Bass et al.)</h3>
+<p>Cada atributo se expresa como escenario medible con 6 partes:</p>
+<ul>
+<li><strong>Fuente del estímulo</strong> — quién/qué lo genera (usuario, sistema externo, atacante)</li>
+<li><strong>Estímulo</strong> — qué ocurre (petición, fallo, ataque)</li>
+<li><strong>Artefacto</strong> — qué parte del sistema se ve afectada</li>
+<li><strong>Entorno</strong> — bajo qué condiciones (carga normal, pico, fallo)</li>
+<li><strong>Respuesta</strong> — qué hace el sistema</li>
+<li><strong>Medida de respuesta</strong> — cómo se mide (tiempo, porcentaje, etc.)</li>
+</ul>
+<div class="tip"><strong>⚡ EGEL:</strong> Los atributos de calidad DEBEN ser medibles. "El sistema debe ser rápido" NO es un atributo bien definido. "Respuesta <2s en 95% de requests con 500 usuarios" SÍ lo es.</div>
+`,ref:"Bass et al. (2013) Cap. 4-5 · ISO 25010 · SWEBOK v3.0 Cap. 2"},
+
+{id:"tradeoffs",title:"Tradeoffs entre atributos",icon:"⚔️",html:`
+<p>Toda decisión arquitectónica favorece ciertos atributos a costa de otros. No existe arquitectura que maximice TODO.</p>
+<h3>Tradeoffs clásicos</h3>
+<ul>
+<li><strong>Rendimiento vs Modificabilidad:</strong> Código altamente optimizado es difícil de mantener. Abstracciones y capas facilitan cambios pero agregan overhead.</li>
+<li><strong>Seguridad vs Usabilidad:</strong> Más controles de seguridad (2FA, captchas, tokens) hacen el sistema más difícil de usar.</li>
+<li><strong>Rendimiento vs Disponibilidad:</strong> Replicación mejora disponibilidad pero agrega latencia de sincronización.</li>
+<li><strong>Rendimiento vs Portabilidad:</strong> Optimizar para un hardware/OS específico limita dónde puede correr.</li>
+<li><strong>Escalabilidad vs Consistencia:</strong> Microservicios escalan bien pero la consistencia de datos es eventual (teorema CAP).</li>
+</ul>
+<h3>¿Cómo se decide?</h3>
+<p>Se priorizan los atributos según los drivers del negocio. Un banco prioriza seguridad+disponibilidad. Un juego prioriza rendimiento+usabilidad. Un SaaS prioriza escalabilidad+modificabilidad.</p>
+<div class="tip"><strong>⚡ EGEL:</strong> Si te dan un escenario con "agregar caché mejora tiempo de respuesta pero puede mostrar datos desactualizados" → eso es un TRADEOFF rendimiento vs consistencia. Saber identificar tradeoffs es clave.</div>
+`,ref:"Bass et al. (2013) Cap. 4, 21 · Cervantes et al. (2016) Cap. 3"},
+
+{id:"iso25010",title:"ISO 25010: Modelo de calidad",icon:"📋",html:`
+<p><strong>ISO/IEC 25010</strong> (parte de la familia SQuaRE/ISO 25000) define un modelo estándar de calidad de producto de software con <strong>8 características</strong> principales.</p>
+<h3>Las 8 características</h3>
+<ul>
+<li><strong>Adecuación funcional</strong> — ¿hace lo que debe? (completitud, correctitud, pertinencia)</li>
+<li><strong>Eficiencia de desempeño</strong> — ¿qué tan rápido y con cuántos recursos? (tiempo, recursos, capacidad)</li>
+<li><strong>Compatibilidad</strong> — ¿coexiste y se integra con otros? (coexistencia, interoperabilidad)</li>
+<li><strong>Usabilidad</strong> — ¿es fácil de usar? (reconocibilidad, aprendizaje, operabilidad, protección contra errores, estética, accesibilidad)</li>
+<li><strong>Fiabilidad</strong> — ¿funciona sin fallar? (madurez, disponibilidad, tolerancia a fallos, recuperabilidad)</li>
+<li><strong>Seguridad</strong> — ¿protege datos y acceso? (confidencialidad, integridad, no repudio, responsabilidad, autenticidad)</li>
+<li><strong>Mantenibilidad</strong> — ¿es fácil de cambiar? (modularidad, reusabilidad, analizabilidad, modificabilidad, testeabilidad)</li>
+<li><strong>Portabilidad</strong> — ¿se mueve a otros entornos? (adaptabilidad, instalabilidad, reemplazabilidad)</li>
+</ul>
+<div class="tip"><strong>⚡ EGEL:</strong> ISO 25010 es la versión actualizada de ISO 9126. Si te preguntan por un modelo estándar de calidad de producto de software → ISO 25010. La diferencia con 9126: se agregó Seguridad como característica independiente y se renombraron varias sub-características.</div>
+`,ref:"ISO/IEC 25010 · iso25000.com · SWEBOK v3.0"},
+
+{id:"resumen",title:"Resumen rápido",icon:"📝",html:`
+<h3>Lo que más cae de estos temas</h3>
+<ul>
+<li><strong>1.</strong> 4+1 tiene 4 vistas + escenarios. Los escenarios NO son una quinta vista — son el pegamento.</li>
+<li><strong>2.</strong> Lógica = funcionalidad/clases (usuarios). Desarrollo = código/módulos (programadores). Proceso = concurrencia/hilos (rendimiento). Física = hardware/servidores (operaciones).</li>
+<li><strong>3.</strong> Cada vista tiene su stakeholder y su diagrama UML asociado.</li>
+<li><strong>4.</strong> Vista Física = Diagrama de despliegue. Vista Lógica = Diagrama de clases.</li>
+<li><strong>5.</strong> Atributos de calidad DEBEN ser medibles con escenarios (6 partes de Bass).</li>
+<li><strong>6.</strong> Toda arquitectura implica tradeoffs — no se maximiza todo.</li>
+<li><strong>7.</strong> Rendimiento vs Modificabilidad es el tradeoff más clásico.</li>
+<li><strong>8.</strong> ISO 25010 = 8 características de calidad. Reemplaza a ISO 9126.</li>
+<li><strong>9.</strong> Seguridad se separó como característica independiente en 25010 (en 9126 era sub de funcionalidad).</li>
+<li><strong>10.</strong> Los atributos de calidad determinan la arquitectura, no los funcionales.</li>
+</ul>
+`,ref:"Todas las anteriores"}
+];
+
+const Q=[
+{n:1,q:"En el modelo 4+1 de Kruchten, ¿cuál es el rol de los escenarios (+1)?",o:["Son la quinta vista del sistema.","Conectan y validan las 4 vistas.","Reemplazan los casos de uso.","Documentan los RNF."],c:1,x:"Los escenarios no son una vista independiente — son casos de uso clave que se rastrean a través de las 4 vistas para verificar consistencia.",ref:"Kruchten (1995)",trap:"A es la trampa clásica. Kruchten explícitamente dice que NO son una quinta vista sino el mecanismo de validación."},
+
+{n:2,q:"¿Qué vista del 4+1 interesa al equipo de operaciones/infraestructura?",o:["Lógica.","Desarrollo.","Proceso.","Física."],c:3,x:"Física = cómo el software se mapea al hardware (servidores, nodos, red). Operaciones necesita saber dónde corre cada cosa.",ref:"Kruchten (1995)",trap:"C (Proceso) suena parecido pero habla de hilos/concurrencia, no de infraestructura física."},
+
+{n:3,q:"¿Qué diagrama UML se asocia principalmente con la vista Física?",o:["Diagrama de clases.","Diagrama de componentes.","Diagrama de despliegue.","Diagrama de actividad."],c:2,x:"Vista Física = diagrama de despliegue (nodos 3D con artefactos). Clases = Lógica. Componentes = Desarrollo. Actividad = Proceso.",ref:"Kruchten (1995) · Cervantes et al. (2016) Cap. 5",trap:"B (componentes) es Vista de Desarrollo, no Física. Los componentes son de código, no de hardware."},
+
+{n:4,q:"Un arquitecto necesita mostrar qué hilos se ejecutan en paralelo y cómo se comunican los procesos. ¿Qué vista?",o:["Lógica.","Desarrollo.","Proceso.","Física."],c:2,x:"Proceso = concurrencia, hilos, comunicación entre procesos, rendimiento en ejecución.",ref:"Kruchten (1995)",trap:"D (Física) habla de máquinas, no de hilos. Proceso es sobre el comportamiento en tiempo de ejecución."},
+
+{n:5,q:"¿Qué vista del 4+1 muestra cómo se organiza el código fuente en módulos y paquetes?",o:["Lógica.","Desarrollo.","Proceso.","Escenarios."],c:1,x:"Desarrollo = organización del código, módulos, dependencias entre paquetes. Es la vista del PROGRAMADOR.",ref:"Kruchten (1995)",trap:"A (Lógica) muestra clases del dominio, no la organización del código fuente."},
+
+{n:6,q:"'El sistema debe responder en <2s para el 95% de requests bajo carga de 500 usuarios.' ¿Qué tiene este enunciado que 'debe ser rápido' no tiene?",o:["Más palabras.","Medida de respuesta concreta.","Funcionalidad específica.","Restricción de diseño."],c:1,x:"El primero es un escenario de atributo de calidad con métrica medible. El segundo es vago y no verificable. Bass requiere las 6 partes del escenario.",ref:"Bass et al. (2013) Cap. 4",trap:"A es trivial. C confunde rendimiento con funcionalidad."},
+
+{n:7,q:"Agregar caché mejora el tiempo de respuesta pero puede mostrar datos desactualizados. ¿Qué es esto?",o:["Error de diseño.","Tradeoff rendimiento vs consistencia.","Problema de implementación.","Violación de seguridad."],c:1,x:"Una decisión que mejora un atributo (rendimiento) y perjudica otro (consistencia). Eso es un tradeoff arquitectónico.",ref:"Bass et al. (2013) Cap. 4, 21",trap:"A asume que es un error. Los tradeoffs son INEVITABLES — toda arquitectura los tiene."},
+
+{n:8,q:"¿En qué se diferencia ISO 25010 de ISO 9126?",o:["25010 es para hardware, 9126 para software.","25010 agrega Seguridad como característica independiente.","Son idénticos con diferente número.","9126 es más completa."],c:1,x:"En 9126, seguridad era sub-característica de funcionalidad. En 25010 se separó como característica independiente. También se renombraron varias sub-características.",ref:"ISO 25010 · iso25000.com",trap:"C niega diferencias reales. D invierte la relación — 25010 es la evolución mejorada."},
+
+{n:9,q:"Un banco necesita decidir entre maximizar seguridad o usabilidad. Agregar 2FA + captcha + token físico protege más pero dificulta el acceso. ¿Qué priorizar?",o:["Siempre usabilidad primero.","Depende del dominio: en banca, seguridad sobre usabilidad.","Siempre seguridad primero.","No hay conflicto entre ambos."],c:1,x:"La priorización depende del negocio. Un banco prioriza seguridad; un juego prioriza usabilidad. No hay regla universal.",ref:"Bass et al. (2013) Cap. 4",trap:"A y C generalizan. D niega un tradeoff real y documentado."},
+
+{n:10,q:"Un caso de uso clave se rastrea así: ¿qué clases participan? → ¿en qué módulos? → ¿qué hilos activa? → ¿en qué servidor corre? Esto corresponde a:",o:["4 iteraciones de desarrollo.","Las 4 vistas del modelo 4+1.","4 niveles de testing.","4 fases de RUP."],c:1,x:"Clases = Lógica, Módulos = Desarrollo, Hilos = Proceso, Servidor = Física. Es un escenario (+1) recorriendo las 4 vistas.",ref:"Kruchten (1995)",trap:"D suena a Kruchten por RUP, pero la pregunta describe el recorrido del +1, no fases."},
+
+{n:11,q:"ISO 25010 tiene 8 características. ¿Cuáles son las que tratan de 'funciona sin fallar' y 'es fácil de cambiar'?",o:["Seguridad y portabilidad.","Fiabilidad y mantenibilidad.","Eficiencia y compatibilidad.","Usabilidad y adecuación funcional."],c:1,x:"Fiabilidad = funciona sin fallar (madurez, disponibilidad, tolerancia a fallos). Mantenibilidad = fácil de cambiar (modularidad, testeabilidad, modificabilidad).",ref:"ISO 25010",trap:"A confunde los conceptos. Seguridad = protección de datos, no tolerancia a fallos."},
+
+{n:12,q:"Un escenario de disponibilidad dice: 'Ante la caída de un servidor, el sistema debe continuar operando con degradación mínima en menos de 5 segundos.' ¿Cuáles son el estímulo y la medida de respuesta?",o:["Estímulo: degradación. Medida: 5 segundos.","Estímulo: caída de servidor. Medida: <5 segundos de recuperación.","Estímulo: el sistema. Medida: operación continua.","Estímulo: el usuario. Medida: degradación mínima."],c:1,x:"Estímulo = qué ocurre (caída de servidor). Medida de respuesta = cómo se mide la respuesta (<5s de recuperación). Las 6 partes de Bass.",ref:"Bass et al. (2013) Cap. 4",trap:"A confunde degradación (respuesta) con estímulo. D confunde la fuente (usuario) con el estímulo."},
+
+{n:13,q:"¿Cuál es el tradeoff más clásico en arquitectura de software?",o:["Seguridad vs portabilidad.","Rendimiento vs modificabilidad.","Usabilidad vs fiabilidad.","Escalabilidad vs seguridad."],c:1,x:"Código optimizado = difícil de mantener. Abstracciones y capas = fácil de cambiar pero overhead. Es el tradeoff más citado en la literatura.",ref:"Bass et al. (2013) Cap. 4",trap:"Los demás existen pero B es el más documentado y preguntado. Capas mejora modificabilidad pero perjudica rendimiento."},
+
+{n:14,q:"La vista Lógica muestra las clases del dominio. La vista de Desarrollo muestra los módulos del código. ¿Pueden tener elementos diferentes?",o:["No, deben ser idénticas.","Sí: una clase lógica puede implementarse en varios módulos y viceversa.","Solo difieren en nombre.","La de Desarrollo es un subconjunto de la Lógica."],c:1,x:"Son perspectivas DIFERENTES del mismo sistema. Una clase Pedido (lógica) puede implementarse entre PedidoController, PedidoService y PedidoRepository (desarrollo).",ref:"Kruchten (1995) · Bass et al. (2013) Cap. 18",trap:"A asume que son lo mismo visto diferente. Son vistas con elementos genuinamente distintos."},
+
+{n:15,q:"Un sistema de streaming necesita: respuesta <100ms, soportar 1M de usuarios, estar disponible 99.99% y que los desarrolladores puedan hacer cambios rápido. ¿Es posible maximizar todo simultáneamente?",o:["Sí, con buena arquitectura.","No: habrá tradeoffs inevitables.","Sí, con microservicios.","Sí, con suficiente presupuesto."],c:1,x:"No existe arquitectura que maximice todos los atributos. Habrá tradeoffs: optimizar rendimiento dificulta modificabilidad, alta disponibilidad agrega complejidad, etc.",ref:"Bass et al. (2013) Cap. 4",trap:"A, C y D asumen que con recursos suficientes se elimina el tradeoff. Bass es claro: los tradeoffs son inherentes a la arquitectura."}
+];
+
+const L=["A","B","C","D"];
+let S={view:"menu",pool:[],cur:0,ans:{},ti:0};
+function sh(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function startQuiz(){S.pool=sh([...Q]);S.cur=0;S.ans={};S.view="quiz";render();window.scrollTo(0,0);}
+function pick(qi,oi){if(S.ans[qi]!==undefined)return;S.ans[qi]=oi;render();setTimeout(()=>{const e=document.getElementById('fb-'+qi);if(e)e.scrollIntoView({behavior:'smooth',block:'nearest'});},100);}
+function goTo(i){S.cur=i;render();window.scrollTo(0,0);}
+function finish(){S.view="results";render();window.scrollTo(0,0);}
+function goHome(){S.view="menu";render();window.scrollTo(0,0);}
+function showTheory(i){S.ti=i||0;S.view="theory";render();window.scrollTo(0,0);}
+
+function render(){
+  const a=document.getElementById('app');
+  if(S.view==="menu")return renderMenu(a);
+  if(S.view==="theory")return renderTheory(a);
+  if(S.view==="results")return renderResults(a);
+  if(S.view==="review")return renderReview(a);
+  renderQuiz(a);
+}
+
+function renderMenu(el){
+  el.innerHTML=`<div class="hdr"><div class="tag">SESIÓN 8 · JUEVES 26 MARZO · SUBÁREA 2.1</div>
+  <h1>Modelo 4+1 de Kruchten + Atributos de Calidad</h1>
+  <p>Vistas arquitectónicas, ISO 25010, tradeoffs, escenarios de calidad</p></div>
+  <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:12px">CONTENIDO</div>
+  <div class="modes">
+    <button class="mode-btn" onclick="showTheory(0)"><h3 style="color:var(--purple)">📖 Teoría</h3><p>${theory.length} fichas · Kruchten, Bass, ISO 25010, Cervantes</p></button>
+    <button class="mode-btn" onclick="startQuiz()" style="border-color:rgba(239,68,68,.25)"><h3 style="color:#ef4444">🧪 Quiz — 15 preguntas</h3><p>Escenarios con retroalimentación y análisis de trampa</p></button>
+  </div>`;
+}
+
+function renderTheory(el){
+  const t=theory[S.ti];
+  el.innerHTML=`<div class="hdr" style="padding:16px 22px"><div style="display:flex;justify-content:space-between;align-items:center">
+    <div><div class="tag">TEORÍA 2.1</div></div>
+    <button class="btn btn-ghost" onclick="goHome()" style="font-size:11px;padding:6px 12px">✕</button></div></div>
+  <div class="tabs">${theory.map((th,i)=>`<button class="tab ${i===S.ti?'active':''}" onclick="S.ti=${i};render();window.scrollTo(0,0)">${th.icon} ${th.title.length>15?th.title.substring(0,15)+'…':th.title}</button>`).join('')}</div>
+  <div class="section"><h2>${t.icon} ${t.title}</h2>${t.html}<div class="ref">📖 ${t.ref}</div></div>
+  <div class="nav">
+    ${S.ti>0?`<button class="btn btn-ghost" onclick="S.ti--;render();window.scrollTo(0,0)">← Anterior</button>`:''}
+    ${S.ti<theory.length-1?`<button class="btn btn-primary" onclick="S.ti++;render();window.scrollTo(0,0)">Siguiente →</button>`:''}
+    <button class="btn btn-ghost" onclick="startQuiz()" style="margin-left:auto">🧪 Quiz</button>
+  </div>`;
+}
+
+function renderQuiz(el){
+  const q=S.pool[S.cur],qi=S.cur,ad=S.ans[qi]!==undefined,ok=ad&&S.ans[qi]===q.c,t=S.pool.length,d=Object.keys(S.ans).length,p=Math.round((d/t)*100);
+  el.innerHTML=`<div class="hdr" style="padding:16px 22px"><div style="display:flex;justify-content:space-between;align-items:center">
+    <div><div class="tag">QUIZ 2.1</div></div>
+    <button class="btn btn-ghost" onclick="goHome()" style="font-size:11px;padding:6px 12px">✕</button></div></div>
+  <div class="pbar"><div class="label">${d}/${t}</div><div class="track"><div class="fill" style="width:${p}%"></div></div><div class="label">${p}%</div></div>
+  <div class="qcard"><div class="qnum">P${qi+1}/${t}</div><div class="qtxt">${q.q}</div>
+  <div class="opts">${q.o.map((o,i)=>{let c='opt';if(ad){c+=' locked';if(i===q.c)c+=' correct';else if(i===S.ans[qi]&&i!==q.c)c+=' wrong';else c+=' dimmed';}return`<button class="${c}" onclick="pick(${qi},${i})"><span class="letter">${L[i]}</span><span>${o}</span></button>`;}).join('')}</div>
+  ${ad?`<div class="fb ${ok?'ok':'no'}" id="fb-${qi}"><div class="fb-tag">${ok?'✓ CORRECTO':'✗ INCORRECTO — '+L[q.c]}</div><div class="fb-text">${q.x}</div><div class="fb-ref">📖 ${q.ref}</div>${q.trap?`<div class="fb-trap"><div class="trap-tag">⚠️ TRAMPA</div><p>${q.trap}</p></div>`:''}</div>`:''}</div>
+  <div class="nav">${qi>0?`<button class="btn btn-ghost" onclick="goTo(${qi-1})">←</button>`:''}${ad&&qi<t-1?`<button class="btn btn-primary" onclick="goTo(${qi+1})">Siguiente →</button>`:''}${ad&&qi===t-1?`<button class="btn btn-primary" onclick="finish()">Resultados</button>`:''}${d===t&&qi<t-1?`<button class="btn btn-primary" onclick="finish()" style="margin-left:auto">Resultados</button>`:''}</div>
+  <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:16px">${S.pool.map((_,i)=>{const a=S.ans[i],ic=a!==undefined&&a===S.pool[i].c,iw=a!==undefined&&a!==S.pool[i].c;let bg=i===qi?'var(--purple)':ic?'var(--green)':iw?'var(--red)':'var(--card2)',bd=i===qi?'var(--purple)':ic?'var(--green2)':iw?'var(--red2)':'var(--border)';return`<button onclick="goTo(${i})" style="width:28px;height:28px;border-radius:6px;background:${bg};border:1px solid ${bd};color:${i===qi||a!==undefined?'#fff':'var(--text2)'};font-size:11px;font-family:'DM Mono',monospace;cursor:pointer;display:flex;align-items:center;justify-content:center">${i+1}</button>`;}).join('')}</div>`;
+}
+
+function renderResults(el){
+  const t=S.pool.length,c=Object.entries(S.ans).filter(([k,v])=>v===S.pool[+k].c).length,p=Math.round((c/t)*100),cls=p>=80?'score-ok':p>=60?'score-mid':'score-bad';
+  const wrong=S.pool.filter((_,i)=>S.ans[i]!==undefined&&S.ans[i]!==S.pool[i].c);
+  el.innerHTML=`<div class="results"><h2>Resultados — Sesión 8</h2><div class="score-big ${cls}">${c}/${t}</div><div style="font-size:14px;color:var(--text2);margin-bottom:20px">${p}%</div>
+  ${wrong.length>0?`<div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--text2);margin:16px 0 10px">FALLASTE</div>${wrong.map(q=>`<div class="review-item"><div style="color:var(--white);font-weight:500">P${q.n}. ${q.q.substring(0,80)}...</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--green);margin-top:4px">→ ${L[q.c]}: ${q.o[q.c]}</div></div>`).join('')}`:'<div style="color:var(--green);font-size:15px;margin:20px 0">🎉 Perfecto</div>'}
+  <div class="nav" style="margin-top:20px"><button class="btn btn-ghost" onclick="S.view='review';render();window.scrollTo(0,0)">📋 Revisar</button><button class="btn btn-ghost" onclick="showTheory(0)">📖 Teoría</button><button class="btn btn-primary" onclick="goHome()">🏠</button></div></div>`;
+}
+
+function renderReview(el){
+  el.innerHTML=`<div class="hdr" style="padding:16px 22px"><div style="display:flex;justify-content:space-between;align-items:center"><div><div class="tag">REVISIÓN</div></div><button class="btn btn-ghost" onclick="finish()" style="font-size:11px;padding:6px 12px">←</button></div></div>
+  ${S.pool.map((q,i)=>{const a=S.ans[i],ok=a!==undefined&&a===q.c;return`<div class="qcard"><div class="qnum" style="display:flex;justify-content:space-between"><span>P${q.n}</span><span style="color:${ok?'var(--green)':'var(--red)'};font-weight:600">${ok?'✓':'✗'}</span></div><div class="qtxt" style="font-size:13px">${q.q}</div><div style="margin-top:8px;font-size:12px">${!ok?`<div style="color:var(--red)">Tuya: ${L[a]} — ${q.o[a]}</div>`:''}
+  <div style="color:var(--green)">→ ${L[q.c]}: ${q.o[q.c]}</div></div><div style="margin-top:6px;font-size:11px;color:var(--text2);line-height:1.6">${q.x}</div></div>`;}).join('')}
+  <div class="nav" style="margin-top:14px"><button class="btn btn-primary" onclick="goHome()">🏠</button></div>`;
+}
+render();
+</script>
+</body>
+</html>
